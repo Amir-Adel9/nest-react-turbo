@@ -1,0 +1,37 @@
+# Dependencies (avoids invalid file request from pnpm symlinks on Windows)
+node_modules
+**/node_modules
+.pnpm-store
+apps/*/dist
+apps/*/build
+dist
+build
+
+# Git and IDE
+.git
+.gitignore
+.vscode
+.cursor
+
+# Env and local files (use .env.production in compose)
+.env
+.env.*
+!.env.production
+apps/api/.env
+apps/web/.env
+
+# Test and misc
+**/*.spec.ts
+**/*.spec.tsx
+**/test
+**/tests
+**/__tests__
+**/coverage
+*.md
+!apps/api/README.md
+!apps/web/README.md
+
+# Docker (avoid copying into context)
+docker-compose*.yml
+Dockerfile*
+.dockerignore

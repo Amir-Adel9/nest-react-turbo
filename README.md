@@ -1,3 +1,37 @@
+# Easygenerator – Full Stack Auth
+
+Monorepo: **api** (NestJS + MongoDB) and **web** (React + Vite). No env files are required for a quick run; defaults are built in.
+
+## Quick start
+
+**Requirements:** Node ≥18, pnpm, Docker (for MongoDB in dev and for full prod stack).
+
+```sh
+git clone <repo-url>
+cd <repo>
+pnpm install
+```
+
+- **Development:** MongoDB in Docker, API + web run locally via Turbo.
+
+  ```sh
+  pnpm start:dev
+  ```
+
+  - API: http://localhost:3000
+  - Web: http://localhost:5173 (proxies `/api` to the API)
+
+- **Production (all in Docker):** MongoDB + API + gateway (Nginx serving web and proxying `/api`).
+  ```sh
+  pnpm start:prod
+  ```
+
+  - App: http://localhost:8080 (override with `GATEWAY_PORT=80` in `.env` if needed)
+
+Optional env: copy `.env.example` to `.env` and `apps/api/.env.example` to `apps/api/.env` (or `.env.production` for prod overrides). Defaults work without them.
+
+---
+
 # Turborepo starter
 
 This Turborepo starter is maintained by the Turborepo core team.

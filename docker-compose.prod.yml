@@ -1,0 +1,70 @@
+services:
+  mongodb:
+    image: mongo:8.2
+    container_name: auth-mongo-prod
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE:-easygenerator}
+    volumes:
+      - prod_db_data:/data/db
+    networks:
+      - backend_net
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.api
+    container_name: auth-api-prod
+    restart: unless-stopped
+    # Optional: add env_file: - ./apps/api/.env.production to override defaults
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017/easygenerator}
+      - PORT=${PORT:-3000}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - backend_net
+    healthcheck:
+      # Node image has no wget/curl; use node to hit /api (no trailing slash - Nest route is GET /api)
+      test:
+        [
+          'CMD-SHELL',
+          'node -e "require(''http'').get(''http://localhost:''+(process.env.PORT||3000)+''/api'',r=>{r.resume();process.exit(r.statusCode===200?0:1)}).on(''error'',()=>process.exit(1))"',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  gateway:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.web
+    container_name: auth-gateway-prod
+    restart: unless-stopped
+    # Host port for gateway (default 8080). Set GATEWAY_PORT=80 to use http://localhost
+    ports:
+      - '${GATEWAY_PORT:-8080}:80'
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+networks:
+  backend_net:
+    driver: bridge
+
+volumes:
+  prod_db_data:
