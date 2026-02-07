@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { plainToInstance } from 'class-transformer';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from './user.schema';
 import { UserEntity } from './entities/user.entity';
@@ -41,7 +41,10 @@ export class UsersService {
   }
 
   async findUserByEmail(email: string): Promise<UserEntity | null> {
-    const userDoc = await this.userModel.findOne({ email }).exec();
+    const userDoc = await this.userModel
+      .findOne({ email: email.toLowerCase() })
+      .lean()
+      .exec();
 
     if (!userDoc) return null;
 
@@ -50,19 +53,33 @@ export class UsersService {
 
   async findUserByEmailWithPassword(
     email: string,
-  ): Promise<UserDocument | null> {
+  ): Promise<(User & { _id: Types.ObjectId; password: string }) | null> {
     const userDoc = await this.userModel
-      .findOne({ email })
+      .findOne({ email: email.toLowerCase() })
       .select('+password')
+      .lean()
       .exec();
     if (!userDoc) return null;
 
-    return userDoc;
+    return userDoc as User & { _id: Types.ObjectId; password: string };
   }
 
-  /** Uses doc.toObject() with no options so virtuals and flattenMaps are not included. */
-  public toUserResponse(doc: UserDocument): UserEntity {
-    return plainToInstance(UserEntity, doc.toObject(), {
+  async findById(id: string): Promise<UserEntity | null> {
+    if (!Types.ObjectId.isValid(id)) return null;
+    const userDoc = await this.userModel.findById(id).lean().exec();
+    if (!userDoc) return null;
+    return this.toUserResponse(userDoc);
+  }
+
+  public toUserResponse(
+    doc:
+      | UserDocument
+      | (Record<string, any> & User & { _id: Types.ObjectId })
+      | Record<string, unknown>,
+  ): UserEntity {
+    const plain = (doc as UserDocument).toObject?.() ?? doc;
+
+    return plainToInstance(UserEntity, plain, {
       excludeExtraneousValues: true,
     });
   }

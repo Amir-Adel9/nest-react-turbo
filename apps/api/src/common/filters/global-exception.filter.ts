@@ -39,13 +39,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message = exception.message;
     }
 
-    // 3. Log 500s (Internal Errors) for debugging
-    if (httpStatus >= 500) {
-      this.logger.error(
-        `[${httpStatus}] ${message}`,
-        exception instanceof Error ? exception.stack : undefined,
-      );
-    }
+    this.logger.error(
+      `[${httpStatus}] ${message}`,
+      exception instanceof Error ? exception.stack : undefined,
+    );
 
     // 4. Strict Response Contract
     const responseBody = {

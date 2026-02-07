@@ -13,12 +13,11 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ParseEmailPipe } from '../common/pipes/parse-email.pipe';
+import { UserEntity } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { UserEntity } from '../users/entities/user.entity';
-import { UsersService } from '../users/users.service';
 
 @ApiTags('Auth')
 @Controller()
@@ -43,8 +42,8 @@ export class AuthController {
       },
     },
   })
-  async register(@Body() body: RegisterDto): Promise<UserEntity> {
-    return this.usersService.createUser(body);
+  async register(@Body() registerDto: RegisterDto): Promise<UserEntity> {
+    return this.usersService.createUser(registerDto);
   }
 
   @Post('auth/login')
@@ -71,10 +70,9 @@ export class AuthController {
     },
   })
   async login(
-    @Body('email', ParseEmailPipe) email: string,
     @Body() body: LoginDto,
   ): Promise<{ accessToken: string; user: UserEntity }> {
-    const user = await this.authService.validateUser(email, body.password);
+    const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
