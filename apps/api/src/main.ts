@@ -1,16 +1,34 @@
-import { NestFactory } from '@nestjs/core';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Set global prefix to /api
   app.setGlobalPrefix('api');
 
-  // Enable CORS only in development, allowing requests from Vite dev server
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalFilters(new GlobalExceptionFilter(app.get(HttpAdapterHost)));
+
+  const config = new DocumentBuilder()
+    .setTitle('Easygenerator Auth API')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+
   if (process.env.NODE_ENV !== 'production') {
     app.enableCors({
-      origin: 'http://localhost:5173', // Vite default dev server port
+      origin: 'http://localhost:5173',
       credentials: true,
     });
   }

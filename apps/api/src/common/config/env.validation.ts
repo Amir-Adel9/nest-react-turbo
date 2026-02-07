@@ -6,10 +6,13 @@ export const envSchema = z.object({
     .default('development'),
   PORT: z.coerce.number().default(3000),
   MONGODB_URI: z
-    .string()
     .url('MONGODB_URI must be a valid connection string')
     .default('mongodb://localhost:27017/easygenerator'),
-  JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
+  JWT_SECRET: z
+    .string()
+    .min(1, 'JWT_SECRET is required')
+    .default('supersecretkey'),
+  ADMIN_SEED_PASSWORD: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

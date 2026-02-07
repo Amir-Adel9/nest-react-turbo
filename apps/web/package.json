@@ -3,8 +3,17 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "turbo": {
+    "tasks": {
+      "dev": {
+        "dependsOn": [
+          "api#dev"
+        ]
+      }
+    }
+  },
   "scripts": {
-    "dev": "vite",
+    "dev": "wait-on http://localhost:3000/api -t 60000 && vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -36,6 +45,7 @@
     "globals": "^16.5.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "wait-on": "^8.0.1"
   }
 }

@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "start:dev": "docker compose -f docker-compose.dev.yml up -d && turbo dev",
+    "start:dev": "docker compose -f docker-compose.dev.yml up -d --wait && turbo dev --ui=stream",
+    "stop:dev": "docker compose -f docker-compose.dev.yml down",
     "start:prod": "docker compose -f docker-compose.prod.yml up --build -d && docker compose -f docker-compose.prod.yml logs -f",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -15,7 +16,10 @@
     "web:install": "pnpm install --filter web",
     "web:dev": "pnpm --filter web dev",
     "web:build": "pnpm --filter web build",
-    "web:start": "pnpm --filter web start"
+    "web:start": "pnpm --filter web start",
+    "db:up": "docker compose -f docker-compose.dev.yml up -d",
+    "db:down": "docker compose -f docker-compose.dev.yml down",
+    "db:restart": "docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml up -d"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
