@@ -28,10 +28,6 @@ const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   beforeLoad: async () => {
-    const user = useAuthStore.getState().user;
-    if (!user) {
-      throw redirect({ to: '/login', replace: true });
-    }
     try {
       await ensureUser();
     } catch {

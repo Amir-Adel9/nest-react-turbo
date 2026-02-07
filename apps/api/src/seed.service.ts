@@ -5,7 +5,7 @@ import { UsersService } from './users/users.service';
 
 const DEFAULT_ADMIN_EMAIL = 'admin@example.com';
 const DEFAULT_ADMIN_NAME = 'Admin';
-const DEV_SEED_PASSWORD = 'admin123';
+const DEV_SEED_PASSWORD = 'admin123!';
 
 @Injectable()
 export class SeedService implements OnModuleInit {

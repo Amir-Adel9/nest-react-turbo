@@ -4,353 +4,403 @@
  */
 
 export interface paths {
-    "/api": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["AppController_getIndex"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/api': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/auth/register": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Register a new user
-         * @description Creates a user and logs them in. Sets access_token and refresh_token via Set-Cookie (httpOnly).
-         */
-        post: operations["AuthController_register"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['AppController_getIndex'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/auth/register': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/auth/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Login
-         * @description Authenticates and sets access_token and refresh_token via Set-Cookie (httpOnly).
-         */
-        post: operations["AuthController_login"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Register a new user
+     * @description Creates a user and logs them in. Sets access_token and refresh_token via Set-Cookie (httpOnly).
+     */
+    post: operations['AuthController_register'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/auth/login': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/auth/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Refresh tokens
-         * @description Uses the refresh_token cookie to issue a new access_token and refresh_token (rotation). Requires the refresh_token cookie (sent only to this path).
-         */
-        post: operations["AuthController_refresh"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Login
+     * @description Authenticates and sets access_token and refresh_token via Set-Cookie (httpOnly).
+     */
+    post: operations['AuthController_login'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/auth/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Logout
-         * @description Clears the stored refresh token and both cookies. Requires access_token cookie.
-         */
-        post: operations["AuthController_logout"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Refresh tokens
+     * @description Uses the refresh_token cookie to issue a new access_token and refresh_token (rotation). Requires the refresh_token cookie (sent only to this path).
+     */
+    post: operations['AuthController_refresh'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/auth/logout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/auth/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get current user */
-        get: operations["AuthController_getMe"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Logout
+     * @description Clears the stored refresh token and both cookies. Requires access_token cookie.
+     */
+    post: operations['AuthController_logout'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/auth/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /** Get current user */
+    get: operations['AuthController_getMe'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/users': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get all users */
+    get: operations['UsersController_findAll'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        RegisterDto: {
-            /** @example user@example.com */
-            email: string;
-            /** @example John Doe */
-            name: string;
-            /**
-             * @description Min 8 characters, at least one letter, one number, one special character
-             * @example Password1!
-             */
-            password: string;
-        };
-        UserEntity: {
-            id: string;
-            /** @example user@example.com */
-            email: string;
-            /** @example John Doe */
-            name: string;
-        };
-        LoginDto: {
-            /** @example user@example.com */
-            email: string;
-            /** @example your-password */
-            password: string;
-        };
+  schemas: {
+    RegisterDto: {
+      /** @example user@example.com */
+      email: string;
+      /** @example John Doe */
+      name: string;
+      /**
+       * @description Min 8 characters, at least one letter, one number, one special character
+       * @example Password1!
+       */
+      password: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    UserEntity: {
+      id: string;
+      /** @example user@example.com */
+      email: string;
+      /** @example John Doe */
+      name: string;
+    };
+    LoginDto: {
+      /** @example user@example.com */
+      email: string;
+      /** @example your-password */
+      password: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    AppController_getIndex: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  AppController_getIndex: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    AuthController_register: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RegisterDto"];
-            };
-        };
-        responses: {
-            /** @description Registration successful; user is logged in */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserEntity"];
-                };
-            };
-            /** @description User with this email already exists */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        /** @example 409 */
-                        statusCode?: number;
-                        /** @example User with this email already exists */
-                        message?: string;
-                    };
-                };
-            };
-        };
+        content?: never;
+      };
     };
-    AuthController_login: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginDto"];
-            };
-        };
-        responses: {
-            /** @description Login successful */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserEntity"];
-                };
-            };
-            /** @description Invalid email or password */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        /** @example 401 */
-                        statusCode?: number;
-                        message?: string;
-                    };
-                };
-            };
-        };
+  };
+  AuthController_register: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    AuthController_refresh: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description New token pair set via Set-Cookie; returns current user */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserEntity"];
-                };
-            };
-            /** @description Invalid or missing refresh token */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        /** @example 401 */
-                        statusCode?: number;
-                        message?: string;
-                    };
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RegisterDto'];
+      };
     };
-    AuthController_logout: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Registration successful; user is logged in */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Logged out */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Invalid or missing access token */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        /** @example 401 */
-                        statusCode?: number;
-                        message?: string;
-                    };
-                };
-            };
+        content: {
+          'application/json': components['schemas']['UserEntity'];
         };
+      };
+      /** @description User with this email already exists */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            /** @example 409 */
+            statusCode?: number;
+            /** @example User with this email already exists */
+            message?: string;
+          };
+        };
+      };
     };
-    AuthController_getMe: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Current user (requires access_token cookie) */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserEntity"];
-                };
-            };
-            /** @description Invalid or missing access token */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example false */
-                        success?: boolean;
-                        /** @example 401 */
-                        statusCode?: number;
-                        message?: string;
-                    };
-                };
-            };
-        };
+  };
+  AuthController_login: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LoginDto'];
+      };
+    };
+    responses: {
+      /** @description Login successful */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UserEntity'];
+        };
+      };
+      /** @description Invalid email or password */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            /** @example 401 */
+            statusCode?: number;
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  AuthController_refresh: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description New token pair set via Set-Cookie; returns current user */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UserEntity'];
+        };
+      };
+      /** @description Invalid or missing refresh token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            /** @example 401 */
+            statusCode?: number;
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  AuthController_logout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Logged out */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid or missing access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            /** @example 401 */
+            statusCode?: number;
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  AuthController_getMe: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Current user (requires access_token cookie) */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UserEntity'];
+        };
+      };
+      /** @description Invalid or missing access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example false */
+            success?: boolean;
+            /** @example 401 */
+            statusCode?: number;
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  UsersController_findAll: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List of all users */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UserEntity'][];
+        };
+      };
+      /** @description Invalid or missing access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            success?: boolean;
+            statusCode?: number;
+            message?: string;
+          };
+        };
+      };
+    };
+  };
 }

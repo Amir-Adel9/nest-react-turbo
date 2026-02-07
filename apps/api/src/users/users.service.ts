@@ -70,6 +70,11 @@ export class UsersService {
     return userDoc as User & { _id: Types.ObjectId; password: string };
   }
 
+  async findAll(): Promise<UserEntity[]> {
+    const docs = await this.userModel.find().lean().exec();
+    return docs.map((doc) => this.toUserResponse(doc));
+  }
+
   async findById(id: string): Promise<UserEntity | null> {
     if (!Types.ObjectId.isValid(id)) return null;
     const userDoc = await this.userModel.findById(id).lean().exec();
