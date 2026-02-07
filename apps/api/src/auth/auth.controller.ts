@@ -1,12 +1,15 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
-  UnauthorizedException,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiOperation,
   ApiResponse,
@@ -14,7 +17,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { UserEntity } from '../users/entities/user.entity';
-import { UsersService } from '../users/users.service';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -22,28 +25,38 @@ import { RegisterDto } from './dto/register.dto';
 @ApiTags('Auth')
 @Controller()
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('auth/register')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Register a new user' })
-  @ApiResponse({ status: 201, description: 'User created', type: UserEntity })
+  @ApiResponse({
+    status: 201,
+    description: 'Registration successful; user is logged in',
+    schema: {
+      properties: {
+        accessToken: { type: 'string' },
+        user: { $ref: '#/components/schemas/UserEntity' },
+      },
+    },
+  })
   @ApiConflictResponse({
     description: 'User with this email already exists',
     schema: {
       properties: {
         success: { type: 'boolean', example: false },
         statusCode: { type: 'number', example: 409 },
-        path: { type: 'string' },
-        message: { type: 'string' },
+        message: {
+          type: 'string',
+          example: 'User with this email already exists',
+        },
       },
     },
   })
-  async register(@Body() registerDto: RegisterDto): Promise<UserEntity> {
-    return this.usersService.createUser(registerDto);
+  async register(
+    @Body() registerDto: RegisterDto,
+  ): Promise<{ accessToken: string; user: UserEntity }> {
+    return this.authService.register(registerDto);
   }
 
   @Post('auth/login')
@@ -64,19 +77,32 @@ export class AuthController {
       properties: {
         success: { type: 'boolean', example: false },
         statusCode: { type: 'number', example: 401 },
-        path: { type: 'string' },
         message: { type: 'string' },
       },
     },
   })
   async login(
-    @Body() body: LoginDto,
+    @Body() loginDTO: LoginDto,
   ): Promise<{ accessToken: string; user: UserEntity }> {
-    const user = await this.authService.validateUser(body.email, body.password);
-    if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-    const accessToken = this.authService.signToken(user);
-    return { accessToken, user };
+    return this.authService.login(loginDTO);
+  }
+
+  @Get('auth/me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user' })
+  @ApiResponse({ status: 200, description: 'Current user', type: UserEntity })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid or missing token',
+    schema: {
+      properties: {
+        success: { type: 'boolean', example: false },
+        statusCode: { type: 'number', example: 401 },
+        message: { type: 'string' },
+      },
+    },
+  })
+  getMe(@Request() req: { user: UserEntity }): UserEntity {
+    return req.user;
   }
 }
