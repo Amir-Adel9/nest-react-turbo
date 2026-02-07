@@ -11,6 +11,9 @@ export class User {
 
   @Prop({ required: true, select: false })
   password: string;
+
+  @Prop({ required: false, select: false })
+  refreshToken?: string;
 }
 
 export type UserDocument = HydratedDocument<User>;

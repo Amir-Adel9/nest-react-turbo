@@ -11,6 +11,11 @@ async function generate() {
   const config = new DocumentBuilder()
     .setTitle('Easygenerator Auth API')
     .setVersion('1.0')
+    .setDescription(
+      'This API uses httpOnly cookies for session management: the access_token cookie is sent with general authenticated requests, and the refresh_token cookie is used for token rotation (path-restricted to /api/auth/refresh). Login and register set both cookies; protected routes require the access_token cookie.',
+    )
+    .addCookieAuth('access_token', { type: 'apiKey' }, 'access_token')
+    .addCookieAuth('refresh_token', { type: 'apiKey' }, 'refresh_token')
     .build();
   const document = SwaggerModule.createDocument(app, config);
 

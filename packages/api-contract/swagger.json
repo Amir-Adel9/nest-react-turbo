@@ -17,6 +17,7 @@
     },
     "/api/auth/register": {
       "post": {
+        "description": "Creates a user and logs them in. Sets access_token and refresh_token via Set-Cookie (httpOnly).",
         "operationId": "AuthController_register",
         "parameters": [],
         "requestBody": {
@@ -35,14 +36,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "accessToken": {
-                      "type": "string"
-                    },
-                    "user": {
-                      "$ref": "#/components/schemas/UserEntity"
-                    }
-                  }
+                  "$ref": "#/components/schemas/UserEntity"
                 }
               }
             }
@@ -62,7 +56,8 @@
                       "example": 409
                     },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "User with this email already exists"
                     }
                   }
                 }
@@ -78,6 +73,7 @@
     },
     "/api/auth/login": {
       "post": {
+        "description": "Authenticates and sets access_token and refresh_token via Set-Cookie (httpOnly).",
         "operationId": "AuthController_login",
         "parameters": [],
         "requestBody": {
@@ -96,14 +92,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "accessToken": {
-                      "type": "string"
-                    },
-                    "user": {
-                      "$ref": "#/components/schemas/UserEntity"
-                    }
-                  }
+                  "$ref": "#/components/schemas/UserEntity"
                 }
               }
             }
@@ -137,13 +126,14 @@
         ]
       }
     },
-    "/api/auth/me": {
-      "get": {
-        "operationId": "AuthController_getMe",
+    "/api/auth/refresh": {
+      "post": {
+        "description": "Uses the refresh_token cookie to issue a new access_token and refresh_token (rotation). Requires the refresh_token cookie (sent only to this path).",
+        "operationId": "AuthController_refresh",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Current user",
+            "description": "New token pair set via Set-Cookie; returns current user",
             "content": {
               "application/json": {
                 "schema": {
@@ -153,7 +143,7 @@
             }
           },
           "401": {
-            "description": "Invalid or missing token",
+            "description": "Invalid or missing refresh token",
             "content": {
               "application/json": {
                 "schema": {
@@ -177,7 +167,99 @@
         },
         "security": [
           {
-            "bearer": []
+            "refresh_token": []
+          }
+        ],
+        "summary": "Refresh tokens",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "description": "Clears the stored refresh token and both cookies. Requires access_token cookie.",
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Logged out"
+          },
+          "401": {
+            "description": "Invalid or missing access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "statusCode": {
+                      "type": "number",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access_token": []
+          }
+        ],
+        "summary": "Logout",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "operationId": "AuthController_getMe",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current user (requires access_token cookie)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserEntity"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "statusCode": {
+                      "type": "number",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access_token": []
           }
         ],
         "summary": "Get current user",
@@ -189,13 +271,25 @@
   },
   "info": {
     "title": "Easygenerator Auth API",
-    "description": "",
+    "description": "This API uses httpOnly cookies for session management: the access_token cookie is sent with general authenticated requests, and the refresh_token cookie is used for token rotation (path-restricted to /api/auth/refresh). Login and register set both cookies; protected routes require the access_token cookie.",
     "version": "1.0",
     "contact": {}
   },
   "tags": [],
   "servers": [],
   "components": {
+    "securitySchemes": {
+      "access_token": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "access_token"
+      },
+      "refresh_token": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "refresh_token"
+      }
+    },
     "schemas": {
       "RegisterDto": {
         "type": "object",
@@ -222,23 +316,6 @@
           "password"
         ]
       },
-      "LoginDto": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "example": "user@example.com"
-          },
-          "password": {
-            "type": "string",
-            "example": "your-password"
-          }
-        },
-        "required": [
-          "email",
-          "password"
-        ]
-      },
       "UserEntity": {
         "type": "object",
         "properties": {
@@ -258,6 +335,23 @@
           "id",
           "email",
           "name"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "your-password"
+          }
+        },
+        "required": [
+          "email",
+          "password"
         ]
       }
     }

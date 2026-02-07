@@ -1,4 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { plainToInstance } from 'class-transformer';
 import { Model, Types } from 'mongoose';
@@ -68,6 +74,46 @@ export class UsersService {
     if (!Types.ObjectId.isValid(id)) return null;
     const userDoc = await this.userModel.findById(id).lean().exec();
     if (!userDoc) return null;
+    return this.toUserResponse(userDoc);
+  }
+
+  async updateRefreshToken(
+    userId: string,
+    refreshToken: string | null,
+  ): Promise<void> {
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new BadRequestException('Invalid user id');
+    }
+    const update: { refreshToken?: string | null } = refreshToken
+      ? { refreshToken: await bcrypt.hash(refreshToken, SALT_ROUNDS) }
+      : { refreshToken: null };
+    const updated = await this.userModel
+      .findByIdAndUpdate(userId, { $set: update }, { new: true })
+      .exec();
+    if (!updated) {
+      throw new NotFoundException('User not found');
+    }
+  }
+
+  async getUserIfRefreshTokenMatches(
+    userId: string,
+    refreshToken: string,
+  ): Promise<UserEntity> {
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+    const userDoc = await this.userModel
+      .findById(userId)
+      .select('+refreshToken')
+      .lean()
+      .exec();
+    if (!userDoc?.refreshToken) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+    const isMatch = await bcrypt.compare(refreshToken, userDoc.refreshToken);
+    if (!isMatch) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
     return this.toUserResponse(userDoc);
   }
 
