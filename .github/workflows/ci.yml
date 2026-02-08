@@ -1,4 +1,4 @@
-name: CI
+name: Easygenerator - Full Stack Auth CI/CD
 
 on:
   push:
@@ -35,8 +35,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "pnpm"
+          node-version: '20'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -89,15 +89,13 @@ jobs:
           sed -i 's/\r$//' ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key_path: /home/runner/.ssh/deploy_key
-          envs: DEPLOY_APP_DIR
-          script: |
-            cd "${DEPLOY_APP_DIR:-$HOME/easygenerator-auth}" || exit 1
-            git fetch origin && git reset --hard origin/main
-            docker compose -f docker-compose.prod.yml up -d --build
-            sleep 5
-            curl -sf "http://localhost:${GATEWAY_PORT:-8080}/api" || exit 1
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          DEPLOY_APP_DIR: ${{ vars.DEPLOY_APP_DIR }}
+        run: |
+          REMOTE_DIR="${DEPLOY_APP_DIR:-}"
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=30 \
+            -i ~/.ssh/deploy_key \
+            "$SSH_USER@$SSH_HOST" \
+            "export DEPLOY_APP_DIR='$REMOTE_DIR'; cd \"\${DEPLOY_APP_DIR:-\$HOME/easygenerator-auth}\" && git fetch origin && git reset --hard origin/main && docker compose -f docker-compose.prod.yml up -d --build && sleep 5 && curl -sf 'http://localhost:8080/api'"
