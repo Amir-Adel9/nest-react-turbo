@@ -1,6 +1,7 @@
 {
   "name": "Easygenerator - Full Stack Auth",
   "private": true,
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "build": "turbo run build",
     "start:dev": "docker compose -f docker-compose.dev.yml up -d --wait && turbo dev --ui=stream",
@@ -8,19 +9,18 @@
     "start:prod": "docker compose -f docker-compose.prod.yml up --build -d && docker compose -f docker-compose.prod.yml logs -f",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "test:all": "pnpm test && pnpm test:e2e:api",
-    "test:e2e:api": "pnpm --filter api test:e2e",
-    "test:e2e:web": "pnpm --filter web test:e2e",
+    "test:all": "turbo run test && turbo run test:e2e --filter=api",
+    "test:e2e:api": "turbo run test:e2e --filter=api",
+    "test:e2e:web": "turbo run test:e2e --filter=web",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "api:install": "pnpm install --filter api",
-    "api:dev": "pnpm --filter api dev",
-    "api:build": "pnpm --filter api build",
-    "api:start": "pnpm --filter api start",
-    "web:install": "pnpm install --filter web",
-    "web:dev": "pnpm --filter web dev",
-    "web:build": "pnpm --filter web build",
-    "web:start": "pnpm --filter web start",
+    "api:dev": "turbo run dev --filter=api",
+    "api:build": "turbo run build --filter=api",
+    "api:start": "turbo run start --filter=api",
+    "web:dev": "turbo run dev --filter=web",
+    "web:build": "turbo run build --filter=web",
+    "web:preview": "turbo run preview --filter=web",
+    "playwright:install": "turbo run install-browsers --filter=web",
     "db:up": "docker compose -f docker-compose.dev.yml up -d",
     "db:down": "docker compose -f docker-compose.dev.yml down",
     "db:restart": "docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml up -d"
@@ -38,7 +38,5 @@
     "typescript-eslint": "^8.50.0"
   },
   "packageManager": "pnpm@9.0.0",
-  "engines": {
-    "node": ">=18"
-  }
+  "engines": {"node": ">=18"}
 }

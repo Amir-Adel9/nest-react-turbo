@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "generate:openapi": "node dist/src/scripts/generate-openapi.js",
-    "build:full": "nest build && pnpm run generate:openapi",
+    "build:full": "nest build && node dist/src/scripts/generate-openapi.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",

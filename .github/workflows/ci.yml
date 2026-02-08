@@ -51,22 +51,45 @@ jobs:
         run: pnpm test
 
       - name: API E2E tests
-        run: pnpm --filter api test:e2e
+        run: pnpm run test:e2e:api
 
       - name: Start API for web E2E
         run: |
-          pnpm --filter api start &
+          pnpm run api:start &
           npx wait-on http://localhost:3000/api -t 60000
 
       - name: Install Playwright browsers
-        run: pnpm --filter web exec playwright install --with-deps chromium
+        run: pnpm run playwright:install
 
       - name: Start web preview for E2E
         run: |
-          pnpm --filter web preview &
+          pnpm run web:preview &
           npx wait-on http://localhost:5173 -t 60000
 
       - name: Web E2E tests
-        run: pnpm --filter web test:e2e
+        run: pnpm run test:e2e:web
         env:
           BASE_URL: http://localhost:5173
+
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    needs: [ci]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    env:
+      # Optional: set repo variable DEPLOY_APP_DIR to override (e.g. /opt/easygenerator-auth)
+      DEPLOY_APP_DIR: ${{ vars.DEPLOY_APP_DIR }}
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: DEPLOY_APP_DIR
+          script: |
+            cd "${DEPLOY_APP_DIR:-$HOME/easygenerator-auth}" || exit 1
+            git fetch origin && git reset --hard origin/main
+            docker compose -f docker-compose.prod.yml up -d --build
+            sleep 5
+            curl -sf "http://localhost:${GATEWAY_PORT:-8080}/api" || exit 1

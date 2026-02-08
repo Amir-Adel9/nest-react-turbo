@@ -21,6 +21,7 @@
     "test:watch": "vitest",
     "test:run": "vitest run",
     "test:e2e": "playwright test",
+    "install-browsers": "playwright install --with-deps chromium",
     "generate:api-types": "openapi-typescript ../../packages/api-contract/swagger.json -o src/api/schema.d.ts"
   },
   "dependencies": {
