@@ -80,12 +80,20 @@ jobs:
       # Optional: set repo variable DEPLOY_APP_DIR to override (e.g. /opt/easygenerator-auth)
       DEPLOY_APP_DIR: ${{ vars.DEPLOY_APP_DIR }}
     steps:
+      - name: Prepare SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          sed -i 's/\r$//' ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key_path: /home/runner/.ssh/deploy_key
           envs: DEPLOY_APP_DIR
           script: |
             cd "${DEPLOY_APP_DIR:-$HOME/easygenerator-auth}" || exit 1
