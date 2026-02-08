@@ -27,20 +27,15 @@ export class SeedService implements OnModuleInit {
       return;
     }
 
-    const nodeEnv = this.configService.get('NODE_ENV', { infer: true });
     const adminPassword = this.configService.get('ADMIN_SEED_PASSWORD', {
       infer: true,
     });
+    const password = adminPassword ?? DEV_SEED_PASSWORD;
 
-    const password =
-      adminPassword ??
-      (nodeEnv !== 'production' ? DEV_SEED_PASSWORD : undefined);
-
-    if (!password) {
+    if (adminPassword === undefined) {
       this.logger.warn(
-        'No ADMIN_SEED_PASSWORD set in production; skipping admin seed.',
+        'ADMIN_SEED_PASSWORD not set; using default. Set ADMIN_SEED_PASSWORD in production for a secure password.',
       );
-      return;
     }
 
     await this.usersService.createUser({

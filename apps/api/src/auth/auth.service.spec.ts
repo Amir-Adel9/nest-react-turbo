@@ -14,7 +14,16 @@ jest.mock('bcrypt', () => ({
 
 describe('AuthService', () => {
   let service: AuthService;
-  let usersService: jest.Mocked<Pick<UsersService, 'createUser' | 'findUserByEmailWithPassword' | 'toUserResponse' | 'updateRefreshToken' | 'getUserIfRefreshTokenMatches'>>;
+  let usersService: jest.Mocked<
+    Pick<
+      UsersService,
+      | 'createUser'
+      | 'findUserByEmailWithPassword'
+      | 'toUserResponse'
+      | 'updateRefreshToken'
+      | 'getUserIfRefreshTokenMatches'
+    >
+  >;
   let jwtService: jest.Mocked<Pick<JwtService, 'sign'>>;
   let res: jest.Mocked<Pick<Response, 'cookie'>>;
 
@@ -96,9 +105,20 @@ describe('AuthService', () => {
         name: mockUser.name,
         password: 'Password1!',
       });
-      expect(usersService.updateRefreshToken).toHaveBeenCalledWith(mockUser.id, 'signed-token');
-      expect(res.cookie).toHaveBeenCalledWith('access_token', 'signed-token', expect.any(Object));
-      expect(res.cookie).toHaveBeenCalledWith('refresh_token', 'signed-token', expect.any(Object));
+      expect(usersService.updateRefreshToken).toHaveBeenCalledWith(
+        mockUser.id,
+        'signed-token',
+      );
+      expect(res.cookie).toHaveBeenCalledWith(
+        'access_token',
+        'signed-token',
+        expect.any(Object),
+      );
+      expect(res.cookie).toHaveBeenCalledWith(
+        'refresh_token',
+        'signed-token',
+        expect.any(Object),
+      );
       expect(result).toEqual(mockUser);
     });
   });
@@ -129,7 +149,11 @@ describe('AuthService', () => {
         res as Response,
       );
       expect(usersService.updateRefreshToken).toHaveBeenCalled();
-      expect(res.cookie).toHaveBeenCalledWith('access_token', 'signed-token', expect.any(Object));
+      expect(res.cookie).toHaveBeenCalledWith(
+        'access_token',
+        'signed-token',
+        expect.any(Object),
+      );
       expect(result).toEqual(mockUser);
     });
   });
@@ -146,7 +170,10 @@ describe('AuthService', () => {
         mockUser.id,
         'refresh-token',
       );
-      expect(usersService.updateRefreshToken).toHaveBeenCalledWith(mockUser.id, 'signed-token');
+      expect(usersService.updateRefreshToken).toHaveBeenCalledWith(
+        mockUser.id,
+        'signed-token',
+      );
       expect(res.cookie).toHaveBeenCalled();
       expect(result).toEqual(mockUser);
     });
@@ -155,9 +182,20 @@ describe('AuthService', () => {
   describe('logout', () => {
     it('clears refresh token and cookies', async () => {
       await service.logout(mockUser.id, res as Response);
-      expect(usersService.updateRefreshToken).toHaveBeenCalledWith(mockUser.id, null);
-      expect(res.cookie).toHaveBeenCalledWith('access_token', '', expect.any(Object));
-      expect(res.cookie).toHaveBeenCalledWith('refresh_token', '', expect.any(Object));
+      expect(usersService.updateRefreshToken).toHaveBeenCalledWith(
+        mockUser.id,
+        null,
+      );
+      expect(res.cookie).toHaveBeenCalledWith(
+        'access_token',
+        '',
+        expect.any(Object),
+      );
+      expect(res.cookie).toHaveBeenCalledWith(
+        'refresh_token',
+        '',
+        expect.any(Object),
+      );
     });
   });
 

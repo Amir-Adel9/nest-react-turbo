@@ -7,6 +7,7 @@ import {
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model, Types } from 'mongoose';
+import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from './user.schema';
 import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -72,13 +73,16 @@ describe('UsersService', () => {
         name: 'Test User',
         password: 'Password1!',
       });
-      expect(require('bcrypt').hash).toHaveBeenCalledWith('Password1!', 10);
+      expect(bcrypt.hash).toHaveBeenCalledWith('Password1!', 10);
       expect(userModel.create).toHaveBeenCalledWith({
         email: 'user@example.com',
         name: 'Test User',
         password: 'hashed',
       });
-      expect(result).toMatchObject({ email: mockUserEntity.email, name: mockUserEntity.name });
+      expect(result).toMatchObject({
+        email: mockUserEntity.email,
+        name: mockUserEntity.name,
+      });
       expect(result.id).toBeDefined();
     });
 
@@ -123,8 +127,13 @@ describe('UsersService', () => {
     it('returns user entity when found', async () => {
       (userModel.exec as jest.Mock).mockResolvedValue(mockUserDoc);
       const result = await service.findUserByEmail('user@example.com');
-      expect(userModel.findOne).toHaveBeenCalledWith({ email: 'user@example.com' });
-      expect(result).toMatchObject({ email: mockUserEntity.email, name: mockUserEntity.name });
+      expect(userModel.findOne).toHaveBeenCalledWith({
+        email: 'user@example.com',
+      });
+      expect(result).toMatchObject({
+        email: mockUserEntity.email,
+        name: mockUserEntity.name,
+      });
     });
   });
 
@@ -175,9 +184,11 @@ describe('UsersService', () => {
     });
 
     it('hashes and updates when token provided', async () => {
-      const bcrypt = require('bcrypt');
       (userModel.exec as jest.Mock).mockResolvedValue(mockUserDoc);
-      await service.updateRefreshToken('507f1f77bcf86cd799439011', 'refresh-token');
+      await service.updateRefreshToken(
+        '507f1f77bcf86cd799439011',
+        'refresh-token',
+      );
       expect(bcrypt.hash).toHaveBeenCalledWith('refresh-token', 10);
       expect(userModel.findByIdAndUpdate).toHaveBeenCalledWith(
         '507f1f77bcf86cd799439011',
@@ -208,12 +219,14 @@ describe('UsersService', () => {
       (userModel.select as jest.Mock).mockReturnThis();
       (userModel.exec as jest.Mock).mockResolvedValue(null);
       await expect(
-        service.getUserIfRefreshTokenMatches('507f1f77bcf86cd799439011', 'token'),
+        service.getUserIfRefreshTokenMatches(
+          '507f1f77bcf86cd799439011',
+          'token',
+        ),
       ).rejects.toThrow(UnauthorizedException);
     });
 
     it('throws when token does not match', async () => {
-      const bcrypt = require('bcrypt');
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
       (userModel.select as jest.Mock).mockReturnThis();
       (userModel.exec as jest.Mock).mockResolvedValue({
@@ -221,7 +234,10 @@ describe('UsersService', () => {
         refreshToken: 'stored-hash',
       });
       await expect(
-        service.getUserIfRefreshTokenMatches('507f1f77bcf86cd799439011', 'wrong-token'),
+        service.getUserIfRefreshTokenMatches(
+          '507f1f77bcf86cd799439011',
+          'wrong-token',
+        ),
       ).rejects.toThrow(UnauthorizedException);
     });
 

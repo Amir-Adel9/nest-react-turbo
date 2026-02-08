@@ -12,7 +12,9 @@ import { GlobalExceptionFilter } from '../src/common/filters/global-exception.fi
  * validation pipe, serialization, exception filter) for E2E tests.
  */
 export async function createTestApp(): Promise<INestApplication<App>> {
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+  const moduleRef = await Test.createTestingModule({
+    imports: [AppModule],
+  }).compile();
   const app = moduleRef.createNestApplication();
 
   app.setGlobalPrefix('api');

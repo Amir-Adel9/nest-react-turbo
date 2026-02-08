@@ -52,7 +52,7 @@ async function doRefresh(): Promise<Response> {
  */
 async function fetchWithRefresh(input: Request): Promise<Response> {
   const cloned = input.clone();
-  let response = await fetch(cloned);
+  const response = await fetch(cloned);
 
   if (response.status !== 401 || isAuthPath(input.url)) {
     return response;

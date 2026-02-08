@@ -21,7 +21,6 @@ services:
       dockerfile: ./docker/Dockerfile.api
     container_name: auth-api-prod
     restart: unless-stopped
-    # Optional: add env_file: - ./apps/api/.env.production to override defaults
     environment:
       - NODE_ENV=production
       - MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017/easygenerator}
@@ -32,7 +31,6 @@ services:
     networks:
       - backend_net
     healthcheck:
-      # Node image has no wget/curl; use node to hit /api (no trailing slash - Nest route is GET /api)
       test:
         [
           'CMD-SHELL',

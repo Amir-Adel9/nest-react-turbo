@@ -24,7 +24,7 @@ import { UsersModule } from './users/users.module';
       useFactory: (configService: ConfigService<Env, true>) => ({
         uri: configService.get('MONGODB_URI', {
           infer: true,
-        }) as Env['MONGODB_URI'],
+        }),
       }),
     }),
     UsersModule,
