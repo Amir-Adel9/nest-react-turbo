@@ -117,5 +117,5 @@ jobs:
           git fetch origin && git reset --hard origin/main
           docker compose -f docker-compose.prod.yml up -d --build
           sleep 5
-          curl -sf 'http://localhost:8080/api' || exit 1
+          curl -sf 'http://localhost:80/api' || exit 1
           REMOTE_SCRIPT

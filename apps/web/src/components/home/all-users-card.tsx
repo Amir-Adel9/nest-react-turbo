@@ -25,15 +25,17 @@ export function AllUsersCard({ enabled, currentUserEmail }: AllUsersCardProps) {
 
   return (
     <Card>
-      <CardHeader className='flex flex-row items-center justify-between'>
-        <div className='space-y-1'>
-          <CardTitle>All users</CardTitle>
+      <CardHeader className='flex min-w-0 flex-row items-center justify-between gap-2 md:items-center'>
+        <div className='min-w-0 flex-1 space-y-1'>
+          <CardTitle className='truncate' title='All users'>
+            All users
+          </CardTitle>
           <CardDescription>
             Registered accounts in the system
           </CardDescription>
         </div>
         {users && users.length > 0 && (
-          <Badge variant='secondary'>
+          <Badge variant='secondary' className='h-fit shrink-0'>
             {users.length} {users.length === 1 ? 'user' : 'users'}
           </Badge>
         )}

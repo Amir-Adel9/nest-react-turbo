@@ -52,7 +52,7 @@ export function LoginPage() {
   const loginFormRef = useRef<LoginFormRef>(null);
 
   return (
-    <main className='flex min-h-screen items-center justify-center bg-muted/40 p-6'>
+    <main className='flex min-h-screen items-center justify-center bg-muted/40 p-4 sm:p-6'>
       <Card className='w-full max-w-[400px] shadow-sm'>
         <CardHeader className='text-center'>
           <CardTitle className='text-2xl font-semibold tracking-tight'>
