@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RegisterForm } from './register-form';
+import React from 'react';
 
 const mockMutate = vi.fn();
 
@@ -25,7 +26,9 @@ describe('RegisterForm', () => {
     expect(screen.getByLabelText(/^name$/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/confirm.*password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /create account/i }),
+    ).toBeInTheDocument();
   });
 
   it('shows validation error when passwords do not match', async () => {
@@ -33,8 +36,14 @@ describe('RegisterForm', () => {
     render(<RegisterForm />);
     await user.type(screen.getByLabelText(/email/i), 'user@example.com');
     await user.type(screen.getByLabelText(/^name$/i), 'Test User');
-    await user.type(screen.getByPlaceholderText(/min 8 chars/i), 'Password1!');
-    await user.type(screen.getByPlaceholderText(/re-enter your password/i), 'OtherPass1!');
+    await user.type(
+      screen.getByPlaceholderText(/enter your password/i),
+      'Password1!',
+    );
+    await user.type(
+      screen.getByPlaceholderText(/re-enter your password/i),
+      'OtherPass1!',
+    );
     await user.click(screen.getByRole('button', { name: /create account/i }));
     await waitFor(() => {
       expect(screen.getByText(/passwords do not match/i)).toBeInTheDocument();
@@ -47,8 +56,14 @@ describe('RegisterForm', () => {
     render(<RegisterForm />);
     await user.type(screen.getByLabelText(/email/i), 'user@example.com');
     await user.type(screen.getByLabelText(/^name$/i), 'Test User');
-    await user.type(screen.getByPlaceholderText(/min 8 chars/i), 'Password1!');
-    await user.type(screen.getByPlaceholderText(/re-enter your password/i), 'Password1!');
+    await user.type(
+      screen.getByPlaceholderText(/enter your password/i),
+      'Password1!',
+    );
+    await user.type(
+      screen.getByPlaceholderText(/re-enter your password/i),
+      'Password1!',
+    );
     await user.click(screen.getByRole('button', { name: /create account/i }));
     await waitFor(() => {
       expect(mockMutate).toHaveBeenCalledWith({
