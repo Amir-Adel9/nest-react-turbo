@@ -43,10 +43,8 @@ export class AuthService {
     const refreshToken = this.getRefreshToken(user);
     await this.usersService.updateRefreshToken(user.id, refreshToken);
 
-    const isProduction = process.env.NODE_ENV === 'production';
     const cookieOptions = {
       httpOnly: true,
-      secure: isProduction,
       sameSite: 'strict' as const,
     };
 
@@ -102,10 +100,8 @@ export class AuthService {
 
   async logout(userId: string, res: Response): Promise<void> {
     await this.usersService.updateRefreshToken(userId, null);
-    const isProduction = process.env.NODE_ENV === 'production';
     const clearOptions = {
       httpOnly: true,
-      secure: isProduction,
       sameSite: 'strict' as const,
       maxAge: 0,
     };
