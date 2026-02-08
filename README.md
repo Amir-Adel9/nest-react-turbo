@@ -45,7 +45,7 @@ Reasoning behind key choices:
 ## Requirements
 
 - **Node** ≥18
-- **pnpm**, **npm**, **Yarn**, or **Bun** (Node 18+ with [Corepack](https://nodejs.org/api/corepack.html) enabled for pnpm)
+- **pnpm**, **npm**, **Yarn**, or **Bun**
 - **Docker** (for MongoDB in dev and for the full prod stack)
 
 ## Package manager
