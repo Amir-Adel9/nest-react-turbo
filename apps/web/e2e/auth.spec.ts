@@ -21,7 +21,7 @@ test.describe('Auth flow', () => {
 
     await expect(page).toHaveURL(/\//);
     await expect(
-      page.locator('header').getByText(testUser.email),
+      page.locator('header').getByText(testUser.email).nth(1),
     ).toBeVisible();
 
     await page.getByRole('button', { name: /logout|sign out/i }).click();
@@ -33,7 +33,7 @@ test.describe('Auth flow', () => {
 
     await expect(page).toHaveURL(/\//);
     await expect(
-      page.locator('header').getByText(testUser.email),
+      page.locator('header').getByText(testUser.email).nth(1),
     ).toBeVisible();
 
     await page.getByRole('button', { name: /logout|sign out/i }).click();
