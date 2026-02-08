@@ -38,6 +38,7 @@ Monorepo: **API** (NestJS + MongoDB) and **Web** (React + Vite). No env files ar
 - **Security:** The project uses a **Dual-Token Rotation** strategy with **httpOnly** cookies: access and refresh tokens are stored only in httpOnly cookies, the refresh token is path-scoped to `/api/auth/refresh` and rotated on refresh; no tokens in `localStorage` or client-side JS.
 - **Contract:** API surface is described by OpenAPI; the web app uses `openapi-fetch` and types generated from `api-contract`.
 - **CI/CD:** Automated pipeline in `.github/workflows/ci.yml` runs on push/PR to `main`: install, lint, build, unit tests, and e2e tests (API and web); MongoDB is provided via a GitHub Actions service container for API e2e. CI uses pnpm; local usage works with npm, Yarn, or pnpm.
+- **Gateway / Proxy:** NGINX is used as a reverse proxy in production to expose the Dockerized services under a single entry point.
 - **Defaults:** The app runs with `npm install` / `yarn` / `pnpm install` and `npm run start:dev` (or `yarn start:dev` / `pnpm start:dev`) with Docker MongoDB; env is optional for overrides.
 
 ## Technical Decisions & Justifications
