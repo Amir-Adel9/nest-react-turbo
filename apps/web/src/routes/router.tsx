@@ -7,7 +7,8 @@ import {
 } from '@tanstack/react-router';
 import { apiClient } from '@/api/client';
 import { useAuthStore } from '@/stores/auth.store';
-import { DefaultLayout } from '@/routes/layouts/default';
+import { HomeLayout } from '@/routes/layouts/home';
+import { HomePage } from '@/routes/pages/home';
 import { LoginPage } from '@/routes/pages/login';
 import { RegisterPage } from '@/routes/pages/register';
 
@@ -18,6 +19,14 @@ async function ensureUser() {
   const user = data!;
   useAuthStore.getState().setUser(user);
   return user;
+}
+
+function HomeRouteComponent() {
+  return (
+    <HomeLayout>
+      <HomePage />
+    </HomeLayout>
+  );
 }
 
 const rootRoute = createRootRoute({
@@ -34,7 +43,7 @@ const indexRoute = createRoute({
       throw redirect({ to: '/login', replace: true });
     }
   },
-  component: DefaultLayout,
+  component: HomeRouteComponent,
 });
 
 const loginRoute = createRoute({
