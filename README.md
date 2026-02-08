@@ -6,12 +6,12 @@ Monorepo: **API** (NestJS + MongoDB) and **Web** (React + Vite). No env files ar
 
 - [Live Demo](#live-demo)
 - [Principles](#principles)
-- [Technical Decisions](#technical-decisions)
+- [Technical Decisions](#technical-decisions--justifications)
+- [Scope](#scope)
 - [Requirements](#requirements)
 - [Package manager](#package-manager)
 - [Setup and run](#setup-and-run)
 - [Testing](#testing)
-- [Useful links](#useful-links)
 
 ## Live Demo
 
@@ -41,6 +41,21 @@ Reasoning behind key choices:
 - **openapi-fetch for type-safe API calls** — The web app uses `openapi-fetch` with types generated from the OpenAPI schema in `api-contract`. We get end-to-end type safety from schema to client (paths, request/response types) with no runtime overhead and no hand-maintained DTOs. Changes to the API surface show up as compile-time errors in the frontend.
 - **TanStack Router `beforeLoad` for auth** — Auth checks run in route `beforeLoad` so we resolve session and redirects before any component renders. This prevents FOUC (Flash of Unauthenticated Content): users do not see a brief “logged out” state before the app redirects to login.
 - **pnpm for dependency management** — pnpm gives fast, disk-efficient installs and strict dependency resolution (no phantom dependencies). The lock file is deterministic and CI/local installs stay consistent. It's the default choice here, though the repo works fine with npm, Yarn, or Bun.
+
+## Scope
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/refresh`
+- `POST /api/auth/logout`
+- `GET /api/auth/me` (protected)
+- `GET /api/users` and `GET /api/users/:id` (protected)
+
+Authentication is cookie-based with `httpOnly` cookies:
+
+- `access_token` for authenticated API requests
+- `refresh_token` for token rotation (`Path=/api/auth/refresh`)
+
 
 ## Requirements
 
