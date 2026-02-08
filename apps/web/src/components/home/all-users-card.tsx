@@ -16,12 +16,7 @@ type AllUsersCardProps = {
 };
 
 export function AllUsersCard({ enabled, currentUserEmail }: AllUsersCardProps) {
-  const {
-    data: users,
-    isLoading,
-    isError,
-    error,
-  } = useUsers({ enabled });
+  const { data: users, isLoading, isError, error } = useUsers({ enabled });
 
   return (
     <Card>
@@ -30,9 +25,7 @@ export function AllUsersCard({ enabled, currentUserEmail }: AllUsersCardProps) {
           <CardTitle className='truncate' title='All users'>
             All users
           </CardTitle>
-          <CardDescription>
-            Registered accounts in the system.
-          </CardDescription>
+          <CardDescription>Registered accounts in the system.</CardDescription>
         </div>
         {users && users.length > 0 && (
           <Badge variant='secondary' className='h-fit shrink-0'>
@@ -46,9 +39,7 @@ export function AllUsersCard({ enabled, currentUserEmail }: AllUsersCardProps) {
 
         {isError && (
           <div className='rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive'>
-            {error instanceof Error
-              ? error.message
-              : 'Failed to load users'}
+            {error instanceof Error ? error.message : 'Failed to load users'}
           </div>
         )}
 
