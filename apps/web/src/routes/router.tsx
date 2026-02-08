@@ -16,7 +16,7 @@ async function ensureUser() {
   const existing = useAuthStore.getState().user;
   if (existing) return existing;
   const { data } = await apiClient.GET('/api/auth/me');
-  const user = data!;
+  const user = data ?? null;
   useAuthStore.getState().setUser(user);
   return user;
 }

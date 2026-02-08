@@ -3,8 +3,14 @@ name: Easygenerator - Full Stack Auth CI/CD
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**/README.md'
+      - '**/README'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**/README.md'
+      - '**/README'
 
 jobs:
   ci:

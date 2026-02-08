@@ -18,40 +18,50 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
 
-    // 1. Determine Status Code
+    // Determine HTTP status code.
     const httpStatus =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    // 2. Extract and Normalize Message
-    let message = 'Internal server error';
+    // Public message returned to clients. Keep generic for internal errors.
+    let clientMessage = 'Internal server error';
+    // Internal message used for logs.
+    let logMessage = clientMessage;
 
     if (exception instanceof HttpException) {
       const response = exception.getResponse();
-      message =
+      const extracted =
         typeof response === 'object' && response !== null
           ? (response as { message: string }).message ||
             JSON.stringify(response)
           : response;
+      const normalized = this.normalizeMessage(extracted);
+      clientMessage = normalized;
+      logMessage = normalized;
     } else if (exception instanceof Error) {
-      // Catch-all for raw errors (e.g. database errors not caught in service)
-      message = exception.message;
+      // Keep raw details only in logs for non-HTTP exceptions.
+      logMessage = exception.message;
     }
 
     this.logger.error(
-      `[${httpStatus}] ${message}`,
+      `[${httpStatus}] ${logMessage}`,
       exception instanceof Error ? exception.stack : undefined,
     );
 
-    // 4. Strict Response Contract
+    // Strict response contract.
     const responseBody = {
       success: false,
       statusCode: httpStatus,
-      // Ensure message is a string even if class-validator returns an array
-      message: Array.isArray(message) ? message.join(', ') : message,
+      message: clientMessage,
     };
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+  }
+
+  private normalizeMessage(message: unknown): string {
+    if (Array.isArray(message)) return message.join(', ');
+    if (typeof message === 'string') return message;
+    return 'Internal server error';
   }
 }
