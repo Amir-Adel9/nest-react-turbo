@@ -16,7 +16,7 @@
     "dev": "wait-on http://localhost:3000/api -t 60000 && vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "vite preview --port 5173",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:run": "vitest run",
