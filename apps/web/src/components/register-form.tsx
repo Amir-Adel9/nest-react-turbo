@@ -13,7 +13,10 @@ import { cn } from '@/lib/utils';
 // Aligned with backend CreateUserDto: MinLength(3) name, IsStrongPassword(minLength 8, minLowercase 1, minNumbers 1, minSymbols 1)
 const registerSchema = z
   .object({
-    email: z.string().min(1, 'Email is required').email('Please enter a valid email'),
+    email: z
+      .string()
+      .min(1, 'Email is required')
+      .email('Please enter a valid email'),
     name: z.string().min(3, 'Name must be at least 3 characters'),
     password: z
       .string()
@@ -144,7 +147,7 @@ export function RegisterForm() {
             id='register-password'
             type={showPassword ? 'text' : 'password'}
             autoComplete='new-password'
-            placeholder='Min 8 chars, 1 letter, 1 number, 1 special'
+            placeholder='Enter your password'
             aria-invalid={!!errors.password}
             aria-describedby={
               errors.password ? 'register-password-error' : undefined
