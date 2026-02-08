@@ -15,10 +15,8 @@ test.describe('Auth flow', () => {
     await page.goto('/register');
     await page.getByLabel(/email/i).fill(testUser.email);
     await page.getByLabel(/^name$/i).fill(testUser.name);
-    await page.getByPlaceholder(/enter your password/i).fill(testUser.password);
-    await page
-      .getByPlaceholder(/re-enter your password/i)
-      .fill(testUser.password);
+    await page.getByLabel(/^password$/i).fill(testUser.password);
+    await page.getByLabel(/confirm password/i).fill(testUser.password);
     await page.getByRole('button', { name: /create account/i }).click();
 
     await expect(page).toHaveURL(/\//);
@@ -30,7 +28,7 @@ test.describe('Auth flow', () => {
     await expect(page).toHaveURL(/\/login/);
 
     await page.getByLabel(/email/i).fill(testUser.email);
-    await page.getByPlaceholder(/enter your password/i).fill(testUser.password);
+    await page.getByLabel(/^password$/i).fill(testUser.password);
     await page.getByRole('button', { name: /sign in/i }).click();
 
     await expect(page).toHaveURL(/\//);
