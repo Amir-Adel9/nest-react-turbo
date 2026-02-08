@@ -102,6 +102,7 @@ export async function extractErrorMessage(
       return body.message ?? fallback;
     } catch {
       // body consumed or not JSON
+      return fallback;
     }
   }
   return err instanceof Error ? err.message : fallback;

@@ -17,6 +17,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:run": "vitest run",
+    "test:e2e": "playwright test",
     "generate:api-types": "openapi-typescript ../../packages/api-contract/swagger.json -o src/api/schema.d.ts"
   },
   "dependencies": {
@@ -56,6 +60,12 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
-    "wait-on": "^8.0.1"
+    "wait-on": "^8.0.1",
+    "vitest": "^3.2.4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/user-event": "^14.5.2",
+    "jsdom": "^25.0.1",
+    "@playwright/test": "^1.49.0"
   }
 }

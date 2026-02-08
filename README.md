@@ -1,10 +1,25 @@
 # Easygenerator – Full Stack Auth
 
-Monorepo: **api** (NestJS + MongoDB) and **web** (React + Vite). No env files are required for a quick run; defaults are built in.
+Monorepo: **api** (NestJS + MongoDB) and **web** (React + Vite). No env files are required for a quick run; sensible defaults are built in.
 
-## Quick start
+## Principles
 
-**Requirements:** Node ≥18, pnpm, Docker (for MongoDB in dev and for full prod stack).
+- **Monorepo:** [Turborepo](https://turbo.build/repo) with `apps/api` (NestJS + MongoDB), `apps/web` (React + Vite), and `packages/api-contract` (OpenAPI schema and generated types for the frontend).
+- **Auth:** Cookie-based sessions only: httpOnly `access_token` and `refresh_token`; refresh path-restricted; no auth state in `localStorage`.
+- **Security:** The project uses a **Dual-Token Rotation** strategy with **httpOnly** cookies: access and refresh tokens are stored only in httpOnly cookies, the refresh token is path-scoped to `/api/auth/refresh` and rotated on refresh; no tokens in `localStorage` or client-side JS.
+- **Contract:** API surface is described by OpenAPI; the web app uses `openapi-fetch` and types generated from `api-contract`.
+- **CI/CD:** Automated pipeline in `.github/workflows/ci.yml` runs on push/PR to `main`: **pnpm** install, lint, build, unit tests, and e2e tests (API and web); MongoDB is provided via a GitHub Actions service container for API e2e.
+- **Defaults:** The app runs with `pnpm install` and `pnpm start:dev` (with Docker MongoDB); env is optional for overrides.
+
+## Requirements
+
+- **Node** ≥18  
+- **pnpm**  
+- **Docker** (for MongoDB in dev and for the full prod stack)
+
+## Setup and run
+
+**Clone and install:**
 
 ```sh
 git clone <repo-url>
@@ -12,158 +27,47 @@ cd <repo>
 pnpm install
 ```
 
-- **Development:** MongoDB in Docker, API + web run locally via Turbo.
-
-  ```sh
-  pnpm start:dev
-  ```
-
-  - API: http://localhost:3000
-  - Web: http://localhost:5173 (proxies `/api` to the API)
-
-- **Production (all in Docker):** MongoDB + API + gateway (Nginx serving web and proxying `/api`).
-  ```sh
-  pnpm start:prod
-  ```
-
-  - App: http://localhost:8080 (override with `GATEWAY_PORT=80` in `.env` if needed)
-
-Optional env: copy `.env.example` to `.env` and `apps/api/.env.example` to `apps/api/.env` (or `.env.production` for prod overrides). Defaults work without them.
-
----
-
-# Turborepo starter
-
-This Turborepo starter is maintained by the Turborepo core team.
-
-## Using this example
-
-Run the following command:
+**Development:** Start MongoDB, then run API and web via Turbo.
 
 ```sh
-npx create-turbo@latest
+pnpm db:up
+pnpm start:dev
 ```
 
-## What's inside?
+- **API:** http://localhost:3000  
+- **Web:** http://localhost:5173 (proxies `/api` to the API)
 
-This Turborepo includes the following packages/apps:
+**Production (all in Docker):**
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+```sh
+pnpm start:prod
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+- App: http://localhost:8080 (override with `GATEWAY_PORT` in `.env` if needed)
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+**Optional env:** Copy `.env.example` to `.env` at the repo root and `apps/api/.env.example` to `apps/api/.env`. Main variables:
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+| Variable | Description |
+|----------|-------------|
+| `GATEWAY_PORT` | Host port for the prod gateway (default `8080`) |
+| `MONGO_INITDB_DATABASE` | MongoDB database name (e.g. `easygenerator`) |
+| `MONGODB_URI` | MongoDB connection string (API) |
+| `JWT_SECRET` | Secret for JWT signing (API) |
+| `PORT` | API port (default `3000`) |
+| `NODE_ENV` | `development` or `production` |
 
-### Develop
+## Testing
 
-To develop all apps and packages, run the following command:
+- **API unit tests:** `pnpm --filter api test`
+- **API E2E tests:** `pnpm --filter api test:e2e`  
+  Uses in-memory MongoDB when `mongodb-memory-server` is installed; otherwise set `MONGODB_URI` (e.g. Docker MongoDB). Install in-memory: `pnpm add -D mongodb-memory-server --filter api`
+- **Web unit tests:** `pnpm --filter web test` or `pnpm --filter web test:run`
+- **Web E2E tests (Playwright):** `pnpm --filter web test:e2e`  
+  Requires the app to be running (e.g. `pnpm start:dev` or web preview + API dev). Optionally set `BASE_URL`.
+- **All unit tests from root:** `pnpm test`
+- **Unit + API E2E (run everything that doesn’t need the app):** `pnpm test:all`
+- **E2E from root:** `pnpm test:e2e:api` or `pnpm test:e2e:web`
 
-```
-cd my-turborepo
+## Useful links
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+- [Turborepo docs](https://turbo.build/repo/docs) (tasks, caching, filtering)

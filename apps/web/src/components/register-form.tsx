@@ -10,16 +10,17 @@ import { extractErrorMessage } from '@/api/client';
 import { EyeIcon, EyeOffIcon, Loader2Icon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+// Aligned with backend CreateUserDto: MinLength(3) name, IsStrongPassword(minLength 8, minLowercase 1, minNumbers 1, minSymbols 1)
 const registerSchema = z
   .object({
-    email: z.email('Please enter a valid email'),
+    email: z.string().min(1, 'Email is required').email('Please enter a valid email'),
     name: z.string().min(3, 'Name must be at least 3 characters'),
     password: z
       .string()
       .min(8, 'Password must be at least 8 characters')
       .regex(
-        /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).*$/,
-        'Include a letter, number & special character',
+        /^(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).*$/,
+        'Include at least one lowercase letter, one number, and one special character',
       ),
     confirmPassword: z.string().min(1, 'Please confirm your password'),
   })

@@ -64,6 +64,7 @@ export class AuthController {
   }
 
   @Post('auth/login')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Login',
     description:

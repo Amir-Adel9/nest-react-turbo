@@ -11,7 +11,7 @@ import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from './user.schema';
 import { UserEntity } from './entities/user.entity';
-import { CreateUserDTO } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 const SALT_ROUNDS = 10;
 
@@ -21,15 +21,15 @@ export class UsersService {
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {}
 
-  async createUser(createUserDTO: CreateUserDTO): Promise<UserEntity> {
+  async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
     const hashedPassword = await bcrypt.hash(
-      createUserDTO.password,
+      createUserDto.password,
       SALT_ROUNDS,
     );
     try {
       const userDoc = await this.userModel.create({
-        email: createUserDTO.email,
-        name: createUserDTO.name,
+        email: createUserDto.email,
+        name: createUserDto.name,
         password: hashedPassword,
       });
       return this.toUserResponse(userDoc);

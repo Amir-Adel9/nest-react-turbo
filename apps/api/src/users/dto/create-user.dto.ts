@@ -6,7 +6,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class CreateUserDTO {
+export class CreateUserDto {
   @ApiProperty({ example: 'user@example.com' })
   @IsEmail()
   email: string;

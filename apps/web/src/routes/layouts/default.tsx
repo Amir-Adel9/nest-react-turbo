@@ -84,8 +84,8 @@ export function DefaultLayout() {
             <>
               <Card>
                 <CardHeader>
-                  <CardTitle>Welcome, {user.name}</CardTitle>
-                  <CardDescription>You are logged in.</CardDescription>
+                  <CardTitle>{user.name}</CardTitle>
+                  <CardDescription>Welcome to the application</CardDescription>
                 </CardHeader>
               </Card>
 
@@ -94,7 +94,7 @@ export function DefaultLayout() {
                   <div className='space-y-1'>
                     <CardTitle>All users</CardTitle>
                     <CardDescription>
-                      Registered accounts in the system.
+                      Registered accounts in the system
                     </CardDescription>
                   </div>
                   {users && users.length > 0 && (
