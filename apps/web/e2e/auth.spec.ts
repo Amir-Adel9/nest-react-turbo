@@ -20,7 +20,7 @@ test.describe('Auth flow', () => {
     await page.getByRole('button', { name: /create account/i }).click();
 
     await expect(page).toHaveURL(/\//);
-    await expect(page.getByText(testUser.email)).toBeVisible();
+    await expect(page.locator('header').getByText(testUser.email)).toBeVisible();
 
     await page.getByRole('button', { name: /logout|sign out/i }).click();
     await expect(page).toHaveURL(/\/login/);
@@ -30,7 +30,7 @@ test.describe('Auth flow', () => {
     await page.getByRole('button', { name: /sign in/i }).click();
 
     await expect(page).toHaveURL(/\//);
-    await expect(page.getByText(testUser.email)).toBeVisible();
+    await expect(page.locator('header').getByText(testUser.email)).toBeVisible();
 
     await page.getByRole('button', { name: /logout|sign out/i }).click();
     await expect(page).toHaveURL(/\/login/);
