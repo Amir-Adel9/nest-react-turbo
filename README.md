@@ -15,7 +15,10 @@ Monorepo: **API** (NestJS + MongoDB) and **Web** (React + Vite). No env files ar
 
 ## Live Demo
 
-**[Live Demo](http://srv989705.hstgr.cloud:8080/){:target="_blank"}** — Deployed on my personal VPS. Try it out.
+<a href="http://srv989705.hstgr.cloud:8080/" target="_blank" rel="noopener noreferrer">
+  <strong>Live Demo</strong>
+</a> — Deployed on my personal VPS. Try it out.
+
 
 ## Principles
 
