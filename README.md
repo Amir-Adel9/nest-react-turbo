@@ -15,6 +15,10 @@ Monorepo: **API** (NestJS + MongoDB) and **Web** (React + Vite). No env files ar
 
 ## Live Demo
 
+> ⚠️ **Note:** This demo is served over **HTTP** not **HTTPS**. 
+> Some platforms (including GitHub) may try to auto-upgrade links to HTTPS.
+> <br> If the link doesn’t load when clicked, **remove the `s` from `https`** in the address bar.
+
 **[Live Demo](http://srv989705.hstgr.cloud:8080/)** — Deployed on my personal VPS. Try it out.
 
 <img width="1920" height="957" alt="image" src="https://github.com/user-attachments/assets/7a8e8e51-4cfe-4515-97ac-51417b8d4f90" />
