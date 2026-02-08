@@ -37,11 +37,11 @@ describe('RegisterForm', () => {
     await user.type(screen.getByLabelText(/email/i), 'user@example.com');
     await user.type(screen.getByLabelText(/^name$/i), 'Test User');
     await user.type(
-      screen.getByPlaceholderText(/enter your password/i),
+      screen.getByLabelText(/^password$/i),
       'Password1!',
     );
     await user.type(
-      screen.getByPlaceholderText(/re-enter your password/i),
+      screen.getByLabelText(/confirm.*password/i),
       'OtherPass1!',
     );
     await user.click(screen.getByRole('button', { name: /create account/i }));
@@ -57,11 +57,11 @@ describe('RegisterForm', () => {
     await user.type(screen.getByLabelText(/email/i), 'user@example.com');
     await user.type(screen.getByLabelText(/^name$/i), 'Test User');
     await user.type(
-      screen.getByPlaceholderText(/enter your password/i),
+      screen.getByLabelText(/^password$/i),
       'Password1!',
     );
     await user.type(
-      screen.getByPlaceholderText(/re-enter your password/i),
+      screen.getByLabelText(/confirm.*password/i),
       'Password1!',
     );
     await user.click(screen.getByRole('button', { name: /create account/i }));
