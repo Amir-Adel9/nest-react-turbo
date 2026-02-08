@@ -31,7 +31,7 @@ export function AllUsersCard({ enabled, currentUserEmail }: AllUsersCardProps) {
             All users
           </CardTitle>
           <CardDescription>
-            Registered accounts in the system
+            Registered accounts in the system.
           </CardDescription>
         </div>
         {users && users.length > 0 && (
