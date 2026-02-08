@@ -6,7 +6,7 @@ Monorepo: **API** (NestJS + MongoDB) and **Web** (React + Vite). No env files ar
 
 - [Live Demo](#live-demo)
 - [Principles](#principles)
-- [Technical Decisions & Justifications](#technical-decisions--justifications)
+- [Technical Decisions](#technical-decisions--justifications)
 - [Requirements](#requirements)
 - [Package manager](#package-manager)
 - [Setup and run](#setup-and-run)
