@@ -58,6 +58,9 @@ jobs:
           pnpm --filter api start &
           npx wait-on http://localhost:3000/api -t 60000
 
+      - name: Install Playwright browsers
+        run: pnpm --filter web exec playwright install --with-deps chromium
+
       - name: Start web preview for E2E
         run: |
           pnpm --filter web preview &
