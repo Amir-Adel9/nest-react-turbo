@@ -74,9 +74,7 @@ export function HomeLayout({ children }: HomeLayoutProps) {
       </header>
 
       <section className='flex-1 p-4 sm:p-6'>
-        <div className='mx-auto max-w-4xl space-y-6'>
-          {children}
-        </div>
+        <div className='mx-auto max-w-4xl space-y-6'>{children}</div>
       </section>
     </main>
   );

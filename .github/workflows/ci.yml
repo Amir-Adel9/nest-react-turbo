@@ -3,13 +3,8 @@ name: Easygenerator - Full Stack Auth CI/CD
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - '**/README.md'
-      - 'docs/**'
   pull_request:
     branches: [main]
-    paths-ignore:
-      - '**/README.md'
 
 jobs:
   ci:
@@ -122,5 +117,5 @@ jobs:
           git fetch origin && git reset --hard origin/main
           docker compose -f docker-compose.prod.yml up -d --build
           sleep 5
-          curl -sf 'http://localhost:80/api' || exit 1
+          curl -sf 'http://localhost:8080/api' || exit 1
           REMOTE_SCRIPT

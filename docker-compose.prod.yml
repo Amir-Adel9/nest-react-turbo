@@ -51,16 +51,9 @@ services:
       dockerfile: ./docker/Dockerfile.web
     container_name: auth-gateway-prod
     restart: unless-stopped
-    # HTTP + HTTPS. For HTTPS, set DOMAIN_NAME and mount certs (see docs/deploy-https.md).
+    # Host port for gateway (default 8080). Set GATEWAY_PORT=80 to use http://localhost
     ports:
-      - '80:80'
-      - '443:443'
-    environment:
-      - DOMAIN_NAME=${DOMAIN_NAME:-}
-    volumes:
-      # Mount these for HTTPS (Certbot). Create dirs on host: sudo mkdir -p /var/www/certbot
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      - /var/www/certbot:/var/www/certbot
+      - '${GATEWAY_PORT:-8080}:80'
     depends_on:
       api:
         condition: service_healthy
